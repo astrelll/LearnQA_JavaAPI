@@ -13,11 +13,16 @@ public class HelloWorldTest {
     @Test
     public void testRestAssured() {
 
-        JsonPath responce = RestAssured
-                .given()
-                .get("https://playground.learnqa.ru/api/get_json_homework")
-                .jsonPath();
+        Map <String, Object> body = new HashMap<>();
+        body.put("param1", "value1");
+        body.put("param2", "value2");
 
-        System.out.println((String) responce.get("messages[1].message"));
+        Response response = RestAssured
+                .given()
+                .body(body)
+                .post("https://playground.learnqa.ru/api/check_type")
+                .andReturn();
+
+        response.print();
     }
 }
