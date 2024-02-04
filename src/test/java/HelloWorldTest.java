@@ -13,16 +13,27 @@ public class HelloWorldTest {
     @Test
     public void testRestAssured() {
 
-        Response response = RestAssured
-                .given()
-                .redirects()
-                .follow(false)
-                .when()
-                .get("https://playground.learnqa.ru/api/long_redirect")
-                .andReturn();
+        int statusCode = 300;
+        int amountOfRedirects = 0;
+        Map<String, String> headers = new HashMap<>();
+        String urlRedirects = "https://playground.learnqa.ru/api/long_redirect";
+        Response response = null;
 
-        String locationHeaders = response.getHeader("Location");
-        System.out.println(locationHeaders);
+        while (statusCode != 200) {
+            response = RestAssured
+                    .given()
+                    .headers(headers)
+                    .redirects()
+                    .follow(false)
+                    .when()
+                    .get(urlRedirects)
+                    .andReturn();
 
+            urlRedirects = response.getHeader("Location");
+            statusCode = response.getStatusCode();
+            amountOfRedirects += 1;
+        }
+
+        System.out.println("Количество редиректов: " + amountOfRedirects);
     }
 }
