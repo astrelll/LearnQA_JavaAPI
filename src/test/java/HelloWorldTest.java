@@ -13,21 +13,16 @@ public class HelloWorldTest {
     @Test
     public void testRestAssured() {
 
-        Map<String, String> headers = new HashMap<>();
-        headers.put("MyHeaders1", "MyValue1");
-        headers.put("MyHeaders2", "MyValue2");
-
         Response response = RestAssured
                 .given()
                 .redirects()
                 .follow(false)
                 .when()
-                .get("https://playground.learnqa.ru/api/get_303")
+                .get("https://playground.learnqa.ru/api/long_redirect")
                 .andReturn();
 
-        response.prettyPrint();
+        String locationHeaders = response.getHeader("Location");
+        System.out.println(locationHeaders);
 
-        String locationHeader = response.getHeader("Location");
-        System.out.println(locationHeader);
     }
 }
