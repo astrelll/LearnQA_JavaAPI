@@ -13,27 +13,29 @@ public class HelloWorldTest {
     @Test
     public void testRestAssured() {
 
-        int statusCode = 300;
-        int amountOfRedirects = 0;
-        Map<String, String> headers = new HashMap<>();
-        String urlRedirects = "https://playground.learnqa.ru/api/long_redirect";
+        Map<String, String> data = new HashMap<>();
+        data.put("login", "secret_login");
+        data.put("password", "secret_pass");
+
+        String url = "https://playground.learnqa.ru/api/get_auth_cookie";
         Response response = null;
 
-        while (statusCode != 200) {
-            response = RestAssured
-                    .given()
-                    .headers(headers)
-                    .redirects()
-                    .follow(false)
-                    .when()
-                    .get(urlRedirects)
-                    .andReturn();
+        response = RestAssured
+                .given()
+                .body(data)
+                .when()
+                .post(url)
+                .andReturn();
 
-            urlRedirects = response.getHeader("Location");
-            statusCode = response.getStatusCode();
-            amountOfRedirects += 1;
-        }
+        System.out.println("\nPretty text:");
+        response.prettyPrint();
 
-        System.out.println("Количество редиректов: " + amountOfRedirects);
+        System.out.println("\nheaders:");
+        Headers responseHeaders = response.getHeaders();
+        System.out.println(responseHeaders);
+
+        System.out.println("\ncookies:");
+        Map <String, String> responseCookies = response.getCookies();
+        System.out.println(responseCookies);
     }
 }
