@@ -17,25 +17,31 @@ public class HelloWorldTest {
         data.put("login", "secret_login");
         data.put("password", "secret_pass");
 
-        String url = "https://playground.learnqa.ru/api/get_auth_cookie";
-        Response response = null;
+        String urlGet = "https://playground.learnqa.ru/api/get_auth_cookie";
+        String urlCheck = "https://playground.learnqa.ru/api/check_auth_cookie";
+        Response responseForGet = null;
 
-        response = RestAssured
+        responseForGet = RestAssured
                 .given()
                 .body(data)
                 .when()
-                .post(url)
+                .post(urlGet)
                 .andReturn();
 
-        System.out.println("\nPretty text:");
-        response.prettyPrint();
+        String responseCookie = responseForGet.getCookie("auth_cookie");
+        Map<String, String> cookies = new HashMap<>();
+        if (responseCookie != null) {
+            cookies.put("auth_cookie", responseCookie);
+        }
 
-        System.out.println("\nheaders:");
-        Headers responseHeaders = response.getHeaders();
-        System.out.println(responseHeaders);
+        Response responseForCheck = RestAssured
+                .given()
+                .body(data)
+                .cookies(cookies)
+                .when()
+                .post(urlCheck)
+                .andReturn();
 
-        System.out.println("\ncookies:");
-        Map <String, String> responseCookies = response.getCookies();
-        System.out.println(responseCookies);
+        responseForCheck.print();
     }
 }
